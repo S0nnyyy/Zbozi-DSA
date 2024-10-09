@@ -1,5 +1,6 @@
 ﻿#include "Sklad.h"
 #include <iostream>
+#include <limits> // Pro použití std::numeric_limits
 
 int main() {
     Sklad sklad;
@@ -14,8 +15,17 @@ int main() {
         std::cout << "5. Vypocitat celkovou cenu zbozi\n";
         std::cout << "6. Ulozit do souboru\n";
         std::cout << "7. Nacist ze souboru\n";
+        std::cout << "8. Seradit zbozi\n";
         std::cout << "0. Konec\n";
         std::cin >> volba;
+
+        // Kontrola na špatný vstup u volby
+        if (std::cin.fail()) {
+            std::cin.clear(); // Vyčistí chybový stav vstupu
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignoruje neplatný vstup
+            std::cout << "Neplatny vstup, zadejte cislo." << std::endl;
+            continue;
+        }
 
         if (volba == 0) {
             break;
@@ -26,29 +36,93 @@ int main() {
             int id, pocetKs;
             double cena;
             std::string nazev;
-            std::cout << "Zadejte ID zbozi: ";
-            std::cin >> id;
+
+            // Vstup pro ID s validací
+            while (true) {
+                std::cout << "Zadejte ID zbozi: ";
+                std::cin >> id;
+                if (std::cin.fail()) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Chyba: Musite zadat cislo pro ID." << std::endl;
+                }
+                else {
+                    break;
+                }
+            }
+
             std::cout << "Zadejte nazev zbozi: ";
             std::cin >> nazev;
-            std::cout << "Zadejte cenu zbozi: ";
-            std::cin >> cena;
-            std::cout << "Zadejte pocet ks: ";
-            std::cin >> pocetKs;
+
+            // Vstup pro cenu s validací
+            while (true) {
+                std::cout << "Zadejte cenu zbozi: ";
+                std::cin >> cena;
+                if (std::cin.fail()) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Chyba: Musite zadat cislo pro cenu." << std::endl;
+                }
+                else {
+                    break;
+                }
+            }
+
+            // Vstup pro počet kusů s validací
+            while (true) {
+                std::cout << "Zadejte pocet ks: ";
+                std::cin >> pocetKs;
+                if (std::cin.fail()) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Chyba: Musite zadat cislo pro pocet ks." << std::endl;
+                }
+                else {
+                    break;
+                }
+            }
+
             Zbozi zbozi(id, nazev, cena, pocetKs);
             sklad.pridatZbozi(zbozi);
             break;
         }
         case 2: {
             int id;
-            std::cout << "Zadejte ID zbozi k odebrani: ";
-            std::cin >> id;
+
+            // Vstup pro ID s validací
+            while (true) {
+                std::cout << "Zadejte ID zbozi k odebrani: ";
+                std::cin >> id;
+                if (std::cin.fail()) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Chyba: Musite zadat cislo pro ID." << std::endl;
+                }
+                else {
+                    break;
+                }
+            }
+
             sklad.odebratZbozi(id);
             break;
         }
         case 3: {
             int id;
-            std::cout << "Zadejte ID zbozi k vyhledani: ";
-            std::cin >> id;
+
+            // Vstup pro ID s validací
+            while (true) {
+                std::cout << "Zadejte ID zbozi k vyhledani: ";
+                std::cin >> id;
+                if (std::cin.fail()) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Chyba: Musite zadat cislo pro ID." << std::endl;
+                }
+                else {
+                    break;
+                }
+            }
+
             Zbozi* zbozi = sklad.vyhledatZbozi(id);
             if (zbozi) {
                 zbozi->vypisZbozi();
@@ -76,6 +150,13 @@ int main() {
             std::cout << "Zadejte nazev souboru: ";
             std::cin >> fileName;
             sklad.nacistZeSouboru(fileName);
+            break;
+        }
+        case 8: {
+            std::string kriterium;
+            std::cout << "Zadejte kriterium pro serazeni (id, nazev, cena, pocet): ";
+            std::cin >> kriterium;
+            sklad.seraditZbozi(kriterium);
             break;
         }
         default:
